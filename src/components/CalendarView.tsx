@@ -38,7 +38,11 @@ export function CalendarView({
     )}-${String(date.getDate()).padStart(2, "0")}`;
 
   return (
-    <main className="alternate-view calendar-view">
+    <main
+      id="workspace-main"
+      className="alternate-view calendar-view"
+      tabIndex={-1}
+    >
       <div className="view-heading">
         <div>
           <h1>

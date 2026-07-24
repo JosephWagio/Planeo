@@ -114,6 +114,7 @@ export function BoardHeader({
             key={id}
             className={view === id ? "is-active" : ""}
             onClick={() => onViewChange(id as BoardView)}
+            aria-pressed={view === id}
           >
             <Icon size={15} weight={view === id ? "fill" : "bold"} />
             {label}

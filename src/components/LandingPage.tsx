@@ -42,6 +42,9 @@ const previewColumns = [
 export function LandingPage({ navigate }: LandingPageProps) {
   return (
     <div className="marketing-shell">
+      <a className="skip-link" href="#main-content">
+        Skip to main content
+      </a>
       <header className="marketing-nav">
         <button
           type="button"
@@ -74,7 +77,7 @@ export function LandingPage({ navigate }: LandingPageProps) {
         </div>
       </header>
 
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <section className="hero">
           <div className="hero-copy">
             <p className="hero-kicker">
@@ -137,7 +140,7 @@ export function LandingPage({ navigate }: LandingPageProps) {
                           <small>{card.priority}</small>
                         </div>
                       ))}
-                      <button type="button" tabIndex={-1}>+ Add a card</button>
+                      <span className="preview-add-card">+ Add a card</span>
                     </div>
                   ))}
                 </div>

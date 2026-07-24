@@ -5,6 +5,8 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
+  CaretLeft,
+  CaretRight,
   DotsSixVertical,
   Plus,
   Trash,
@@ -30,6 +32,8 @@ interface BoardListProps {
   selectedLabels: string[];
   searchQuery: string;
   toneIndex: number;
+  previousListId?: string;
+  nextListId?: string;
 }
 
 export function BoardList({
@@ -39,10 +43,13 @@ export function BoardList({
   selectedLabels,
   searchQuery,
   toneIndex,
+  previousListId,
+  nextListId,
 }: BoardListProps) {
   const renameList = useBoardStore((state) => state.renameList);
   const deleteList = useBoardStore((state) => state.deleteList);
   const addCard = useBoardStore((state) => state.addCard);
+  const reorderLists = useBoardStore((state) => state.reorderLists);
   const setActiveCard = useBoardStore((state) => state.setActiveCard);
   const [addingCard, setAddingCard] = useState(false);
   const [cardTitle, setCardTitle] = useState("");
@@ -105,6 +112,28 @@ export function BoardList({
           ariaLabel="Rename list"
         />
         <span className="list-count">{cards.length}</span>
+        <button
+          type="button"
+          className="icon-button list-move"
+          disabled={!previousListId}
+          onClick={() => {
+            if (previousListId) reorderLists(boardId, list.id, previousListId);
+          }}
+          aria-label={`Move ${list.title} left`}
+        >
+          <CaretLeft size={15} weight="bold" />
+        </button>
+        <button
+          type="button"
+          className="icon-button list-move"
+          disabled={!nextListId}
+          onClick={() => {
+            if (nextListId) reorderLists(boardId, list.id, nextListId);
+          }}
+          aria-label={`Move ${list.title} right`}
+        >
+          <CaretRight size={15} weight="bold" />
+        </button>
         <button
           type="button"
           className="icon-button list-delete"

@@ -60,6 +60,31 @@ button:active {
   transform: translateY(1px);
 }
 
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: #fff;
+  background: #10172a;
+  font-weight: 750;
+  text-decoration: none;
+  transform: translateY(-160%);
+  transition: transform 120ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+:target,
+:focus {
+  scroll-margin-top: 80px;
+  scroll-margin-bottom: 64px;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -1051,10 +1076,19 @@ input.board-title {
 
 .list-header {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) auto 32px;
+  grid-template-columns: 24px minmax(0, 1fr) auto 28px 28px 32px;
   align-items: center;
   min-height: 38px;
   padding: 0 0 4px;
+}
+
+.list-move {
+  width: 28px;
+  height: 28px;
+}
+
+.list-move:disabled {
+  visibility: hidden;
 }
 
 .list-drag-handle {
@@ -2737,13 +2771,12 @@ body:has(.auth-shell) {
   font-size: 0;
 }
 
-.preview-column > button {
+.preview-add-card {
+  display: block;
   width: 100%;
   margin-top: 5px;
   padding: 9px 2px 3px;
-  border: 0;
-  color: color-mix(in srgb, var(--preview-tone), #1a243d 28%);
-  background: transparent;
+  color: color-mix(in srgb, var(--preview-tone), #111827 44%);
   text-align: left;
   font-size: 11px;
   font-weight: 700;
@@ -2781,6 +2814,8 @@ body:has(.auth-shell) {
 .workflow-section {
   padding: 110px max(24px, calc((100% - 1120px) / 2)) 120px;
   background: #fff;
+  content-visibility: auto;
+  contain-intrinsic-size: 900px;
 }
 
 .section-heading {
@@ -2841,6 +2876,8 @@ body:has(.auth-shell) {
   background:
     linear-gradient(125deg, rgba(255, 255, 255, 0.06), transparent 45%),
     #182d77;
+  content-visibility: auto;
+  contain-intrinsic-size: 780px;
 }
 
 .feature-copy > p:first-child {
@@ -3032,7 +3069,7 @@ body:has(.auth-shell) {
 .auth-card-heading > span {
   display: block;
   margin-top: 15px;
-  color: #71798a;
+  color: #5d6678;
   font-size: 14px;
 }
 
@@ -3175,8 +3212,8 @@ body:has(.auth-shell) {
 
 .auth-legal {
   margin: 18px 0 0;
-  color: #8a91a0;
-  font-size: 11px;
+  color: #626b7b;
+  font-size: 12px;
   line-height: 1.5;
   text-align: center;
 }

@@ -107,7 +107,12 @@ export function BoardCanvas({
       onDragCancel={() => setActiveCard(null)}
       onDragEnd={handleDragEnd}
     >
-      <main className="board-canvas" aria-label={`${board.title} board`}>
+      <main
+        id="workspace-main"
+        className="board-canvas"
+        aria-label={`${board.title} board`}
+        tabIndex={-1}
+      >
         <SortableContext19
           items={board.lists.map((list) => list.id)}
           strategy={horizontalListSortingStrategy}
@@ -121,6 +126,8 @@ export function BoardCanvas({
               selectedLabels={selectedLabels}
               searchQuery={searchQuery}
               toneIndex={index}
+              previousListId={board.lists[index - 1]?.id}
+              nextListId={board.lists[index + 1]?.id}
             />
           ))}
         </SortableContext19>

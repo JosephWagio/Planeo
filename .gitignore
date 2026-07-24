@@ -5,4 +5,5 @@ dist/
 .env
 .env.*
 !.env.example
+.audit/
 .DS_Store

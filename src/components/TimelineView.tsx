@@ -25,7 +25,11 @@ export function TimelineView({
   const range = Math.max(max - min, 86400000);
 
   return (
-    <main className="alternate-view timeline-view">
+    <main
+      id="workspace-main"
+      className="alternate-view timeline-view"
+      tabIndex={-1}
+    >
       <div className="view-heading">
         <div>
           <h1>Delivery timeline</h1>

@@ -1,7 +1,7 @@
 import { CloudCheck, CloudSlash } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
-import { supabase } from "../lib/supabase";
+import { getSupabase } from "../lib/supabase";
 import {
   createStarterWorkspace,
   useBoardStore,
@@ -21,8 +21,7 @@ export function WorkspaceSync() {
   const [status, setStatus] = useState<SyncState>("loading");
 
   useEffect(() => {
-    const client = supabase;
-    if (!client || !user) {
+    if (!user) {
       setStatus("offline");
       return;
     }
@@ -36,6 +35,11 @@ export function WorkspaceSync() {
       // Never expose the demo cache or a previous local session while an
       // authenticated user's private workspace is being resolved.
       useBoardStore.getState().hydrateWorkspace(createStarterWorkspace());
+      const client = await getSupabase();
+      if (!client) {
+        setStatus("offline");
+        return;
+      }
       const { data, error } = await client
         .from("workspaces")
         .select("boards, active_board_id, notifications")

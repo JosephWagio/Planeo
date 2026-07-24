@@ -6,7 +6,7 @@ import {
   EyeSlash,
   WarningCircle,
 } from "@phosphor-icons/react";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { BrandMark } from "./BrandMark";
 
@@ -16,8 +16,14 @@ interface AuthPageProps {
 }
 
 export function AuthPage({ mode, navigate }: AuthPageProps) {
-  const { configured, signIn, signUp, resetPassword, updatePassword } =
-    useAuth();
+  const {
+    configured,
+    initialize,
+    signIn,
+    signUp,
+    resetPassword,
+    updatePassword,
+  } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,6 +36,10 @@ export function AuthPage({ mode, navigate }: AuthPageProps) {
 
   const isSignup = mode === "signup";
   const isReset = mode === "reset";
+
+  useEffect(() => {
+    void initialize();
+  }, [initialize]);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -152,6 +162,8 @@ export function AuthPage({ mode, navigate }: AuthPageProps) {
                 <input
                   required
                   autoComplete="name"
+                  aria-invalid={message?.type === "error"}
+                  aria-describedby={message ? "auth-feedback" : undefined}
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   placeholder="Your name"
@@ -165,6 +177,8 @@ export function AuthPage({ mode, navigate }: AuthPageProps) {
                   required
                   type="email"
                   autoComplete="email"
+                  aria-invalid={message?.type === "error"}
+                  aria-describedby={message ? "auth-feedback" : undefined}
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   placeholder="you@company.com"
@@ -188,6 +202,8 @@ export function AuthPage({ mode, navigate }: AuthPageProps) {
                   autoComplete={
                     isSignup || isReset ? "new-password" : "current-password"
                   }
+                  aria-invalid={message?.type === "error"}
+                  aria-describedby={message ? "auth-feedback" : undefined}
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder={
@@ -207,7 +223,11 @@ export function AuthPage({ mode, navigate }: AuthPageProps) {
             </label>
 
             {message && (
-              <div className={`auth-message is-${message.type}`} role="status">
+              <div
+                id="auth-feedback"
+                className={`auth-message is-${message.type}`}
+                role={message.type === "error" ? "alert" : "status"}
+              >
                 {message.type === "success" ? (
                   <CheckCircle size={18} weight="fill" />
                 ) : (

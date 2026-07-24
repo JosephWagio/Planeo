@@ -33,24 +33,48 @@ export function CardModal({ board, list, card }: CardModalProps) {
     (state) => state.deleteChecklistItem
   );
   const addComment = useBoardStore((state) => state.addComment);
+  const moveCard = useBoardStore((state) => state.moveCard);
   const [title, setTitle] = useState(card.title);
   const [description, setDescription] = useState(card.description);
   const [checklistText, setChecklistText] = useState("");
   const [comment, setComment] = useState("");
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLInputElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
+    previousFocusRef.current = document.activeElement as HTMLElement | null;
     titleRef.current?.focus();
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setActiveCard(null);
+    const handleDialogKeys = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setActiveCard(null);
+        return;
+      }
+      if (event.key !== "Tab" || !dialogRef.current) return;
+
+      const focusable = Array.from(
+        dialogRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
+        )
+      );
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (!first || !last) return;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", closeOnEscape);
+    document.addEventListener("keydown", handleDialogKeys);
     return () => {
       document.body.style.overflow = originalOverflow;
-      document.removeEventListener("keydown", closeOnEscape);
+      document.removeEventListener("keydown", handleDialogKeys);
+      previousFocusRef.current?.focus();
     };
   }, [setActiveCard]);
 
@@ -75,8 +99,12 @@ export function CardModal({ board, list, card }: CardModalProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="card-modal-title"
+        aria-describedby="card-modal-context"
         ref={dialogRef}
       >
+        <h1 id="card-modal-title" className="sr-only">
+          {card.title}
+        </h1>
         <button
           type="button"
           className="icon-button modal-close"
@@ -93,7 +121,6 @@ export function CardModal({ board, list, card }: CardModalProps) {
           <div>
             <input
               ref={titleRef}
-              id="card-modal-title"
               className="modal-title-input"
               value={title}
               onChange={(event) => setTitle(event.target.value)}
@@ -106,7 +133,7 @@ export function CardModal({ board, list, card }: CardModalProps) {
               }}
               aria-label="Card title"
             />
-            <p>
+            <p id="card-modal-context">
               in <strong>{list.title}</strong>
             </p>
           </div>
@@ -280,6 +307,26 @@ export function CardModal({ board, list, card }: CardModalProps) {
           </div>
 
           <aside className="modal-sidebar">
+            <section>
+              <label className="side-section-title" htmlFor="move-card-list">
+                Move to list
+              </label>
+              <select
+                id="move-card-list"
+                className="date-input"
+                value={list.id}
+                onChange={(event) =>
+                  moveCard(board.id, card.id, event.target.value)
+                }
+              >
+                {board.lists.map((boardList) => (
+                  <option key={boardList.id} value={boardList.id}>
+                    {boardList.title}
+                  </option>
+                ))}
+              </select>
+            </section>
+
             <section>
               <div className="side-section-title">
                 <Flag size={16} weight="bold" />
